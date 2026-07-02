@@ -1,0 +1,235 @@
+/* ==========================================================================
+   Task Management System - Login Module
+   Custom Stylesheet
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   CSS Variables (Theme: White / Blue / Light Gray)
+   -------------------------------------------------------------------------- */
+:root {
+  --primary-color: #0d47a1;       /* Deep blue - primary actions/branding */
+  --primary-color-dark: #093170;  /* Darker blue for hover states */
+  --secondary-color: #1976d2;     /* Lighter blue accent */
+  --background-color: #f2f4f7;    /* Light gray page background */
+  --card-background: #ffffff;     /* White card background */
+  --text-color: #1c2733;          /* Primary text color */
+  --text-muted-color: #6c757d;    /* Muted/secondary text */
+  --border-color: #dfe4ea;        /* Light border color */
+  --error-color: #dc3545;         /* Validation error red */
+  --success-color: #198754;       /* Success green */
+  --shadow-color: rgba(13, 71, 161, 0.12);
+  --transition-speed: 0.25s;
+}
+
+/* --------------------------------------------------------------------------
+   Base / Reset
+   -------------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   Layout: Full-page centering wrapper (Flexbox)
+   -------------------------------------------------------------------------- */
+.login-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #eef2f8 0%, #e4eaf3 100%);
+}
+
+/* --------------------------------------------------------------------------
+   Login Card
+   -------------------------------------------------------------------------- */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--card-background);
+  border-radius: 16px;
+  box-shadow: 0 10px 35px var(--shadow-color);
+  animation: fadeInCard 0.6s ease-out;
+  transition: box-shadow var(--transition-speed) ease,
+    transform var(--transition-speed) ease;
+}
+
+.login-card:hover {
+  box-shadow: 0 14px 42px rgba(13, 71, 161, 0.18);
+}
+
+/* Fade-in animation for the card on page load */
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Logo & Headings
+   -------------------------------------------------------------------------- */
+.login-logo {
+  object-fit: contain;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  padding: 8px;
+  transition: transform var(--transition-speed) ease;
+}
+
+.login-logo:hover {
+  transform: scale(1.06) rotate(-3deg);
+}
+
+.login-title {
+  color: var(--primary-color);
+  letter-spacing: 0.2px;
+}
+
+.login-subtitle {
+  font-size: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   Form Inputs (Bootstrap floating labels enhanced)
+   -------------------------------------------------------------------------- */
+.form-control {
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  transition: border-color var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
+}
+
+/* Input focus animation */
+.form-control:focus {
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.18);
+}
+
+.form-floating > label {
+  color: var(--text-muted-color);
+}
+
+/* Validation feedback text */
+.invalid-feedback {
+  font-size: 0.825rem;
+}
+
+.form-control.is-invalid {
+  border-color: var(--error-color);
+}
+
+.form-control.is-valid {
+  border-color: var(--success-color);
+}
+
+/* --------------------------------------------------------------------------
+   Checkboxes
+   -------------------------------------------------------------------------- */
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.18);
+}
+
+/* --------------------------------------------------------------------------
+   Login Button
+   -------------------------------------------------------------------------- */
+.login-btn {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: background-color var(--transition-speed) ease,
+    transform var(--transition-speed) ease,
+    box-shadow var(--transition-speed) ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(13, 71, 161, 0.28);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Links
+   -------------------------------------------------------------------------- */
+#forgotPasswordLink {
+  color: var(--secondary-color);
+  transition: color var(--transition-speed) ease;
+}
+
+#forgotPasswordLink:hover {
+  color: var(--primary-color-dark);
+  text-decoration: underline !important;
+}
+
+/* --------------------------------------------------------------------------
+   Alerts
+   -------------------------------------------------------------------------- */
+#loginAlert {
+  border-radius: 10px;
+  font-size: 0.9rem;
+  animation: fadeInCard 0.35s ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Modal animation smoothing (Bootstrap already animates; slight refinement)
+   -------------------------------------------------------------------------- */
+.modal.fade .modal-dialog {
+  transition: transform var(--transition-speed) ease-out, opacity var(--transition-speed) ease-out;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Design
+   -------------------------------------------------------------------------- */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .login-card {
+    max-width: 90%;
+  }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+  .login-card {
+    max-width: 100%;
+    border-radius: 12px;
+  }
+
+  .login-title {
+    font-size: 1.1rem;
+  }
+
+  .login-logo {
+    width: 60px;
+    height: 60px;
+  }
+}
