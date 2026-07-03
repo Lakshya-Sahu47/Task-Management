@@ -1,0 +1,4 @@
+# This file exists only so Git tracks the otherwise-empty `instance/`
+# folder. Flask uses this directory (via instance_relative_config=True)
+# for instance-specific files that should not be committed, such as a
+# local SQLite database or a machine-specific config override.

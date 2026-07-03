@@ -7,6 +7,8 @@ mkdir backend
 mkdir backend\models
 mkdir backend\routes
 mkdir backend\services
+mkdir backend\utils
+mkdir backend\instance
 
 :: Frontend
 mkdir frontend
