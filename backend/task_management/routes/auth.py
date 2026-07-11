@@ -6,7 +6,6 @@ cookie session) hold the logged-in user's id; there is no JWT layer
 since none is pinned in requirements.txt.
 
 Routes (mounted at /api/auth):
-    POST /register           -- create a new user account
     POST /login               -- authenticate, start a session
     POST /logout                -- end the session
     POST /change-password        -- change the logged-in user's password
@@ -22,29 +21,9 @@ from task_management.services.auth_service import (
     AuthError,
     authenticate_user,
     change_password,
-    register_user,
 )
 
 auth_bp = Blueprint("auth", __name__)
-
-
-@auth_bp.post("/register")
-def register():
-    data = request.get_json(silent=True) or {}
-    username = data.get("username")
-    password = data.get("password")
-    email = data.get("email")
-    role = data.get("role", "employee")
-
-    if not username or not password or not email:
-        return jsonify({"error": "username, email, and password are required."}), 400
-
-    try:
-        user = register_user(username=username, password=password, email=email, role=role)
-    except AuthError as exc:
-        return jsonify({"error": str(exc)}), 400
-
-    return jsonify(user.to_dict()), 201
 
 
 @auth_bp.post("/login")
