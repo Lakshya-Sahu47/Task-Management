@@ -1,171 +1,123 @@
-# Task Management System — Project README
+# 📋 Task Management System (Lakshya Corp)
 
-This is the **single source of truth** for the Task Management System
-internship project. It tracks overall progress across both the frontend
-and backend, and explains how to run each part that currently exists.
-
-The project is being built **incrementally, one step at a time**. This
-file is updated after each completed step so it always reflects the
-current state of the repo.
+A clean, modern, and user-friendly Task Management System built with a Flask backend and a responsive vanilla HTML/JS/CSS frontend. The application features separate views for **Administrators** (who manage tasks and assign them to employees) and **Employees** (who track and update progress on their assigned tasks).
 
 ---
 
-## 📊 Project Progress Tracker
+## 🗺️ Project Architecture & Structure
 
-| Phase | Area     | Description                                  | Status         |
-|-------|----------|-----------------------------------------------|----------------|
-| 1     | Frontend | Standalone login page (fake auth)             | ✅ Complete     |
-| 1     | Backend  | Flask project structure (no logic yet)        | ✅ Complete     |
-| 2     | Backend  | Database models (MySQL via SQLAlchemy)        | ✅ Complete     |
-| 3     | Backend  | Auth API (`/api/auth/login`) + real routes    | ✅ Complete     |
-| 4     | Backend  | Task CRUD APIs                                | ✅ Complete     |
-| 5     | Frontend | Wire `login.js` to real Flask API             | ✅ Complete     |
-| 6     | Frontend | Dashboard pages (Admin / Employee)            | ✅ Complete     |
-
-Legend: ✅ Complete · 🟡 In progress · ⬜ Not started
-
----
-
-## 📁 Full Project Structure (current state)
+The project has a unified structure where the Flask backend directly serves the frontend static assets.
 
 ```
 project-root/
 │
-├── frontend/
-│   ├── login.html            # Main login page
+├── frontend/                     # Static Frontend Assets
+│   ├── login.html                # Login screen
+│   ├── dashboard.html            # Admin dashboard
+│   ├── employee_dashboard.html   # Employee dashboard
+│   ├── assets/
+│   │   ├── favicon.png           # Custom brand icon
+│   │   └── logo.png              # Brand logo
 │   ├── css/
-│   │   └── style.css          # Custom styles (theme, layout, animations)
-│   ├── js/
-│   │   └── login.js            # Validation, fake auth, session handling
-│   └── assets/
-│       └── logo.png             # Placeholder company logo
+│   │   └── style.css             # Main stylesheet (Theme, animations, layouts)
+│   └── js/
+│       ├── login.js              # Login validation & auth integration
+│       ├── dashboard.js          # Admin dashboard client logic
+│       └── employee_dashboard.js # Employee dashboard client logic
 │
-├── backend/
-│   ├── app.py                 # Flask app factory + dev server entry point
-│   ├── config.py               # Config class (env-based settings)
-│   ├── extensions.py            # Shared extension instances (db, cors)
-│   ├── requirements.txt          # Python dependencies for this phase
-│   ├── models/
-│   │   └── __init__.py            # Empty — DB models added in a later phase
-│   ├── routes/
-│   │   └── __init__.py            # Placeholder Blueprint, no endpoints yet
-│   ├── services/
-│   │   └── __init__.py            # Empty — business logic added later
-│   ├── utils/
-│   │   └── __init__.py            # Empty — shared helpers added later
-│   └── instance/
-│       └── .gitkeep               # Keeps the empty folder tracked in Git
+├── backend/                      # Flask Backend Application
+│   ├── run.py                    # Entry point for development server
+│   ├── requirements.txt          # Python dependencies
+│   ├── .env.example              # Env configuration template
+│   └── task_management/          # Application package
+│       ├── __init__.py           # Application Factory setup (create_app)
+│       ├── config.py             # Config classes (Lax/Secure cookies)
+│       ├── extensions.py         # SQLAlchemy & CORS extensions
+│       ├── models/               # SQLAlchemy ORM Models
+│       │   ├── user.py           # User definitions & credentials
+│       │   ├── employee.py       # Employee profiles
+│       │   ├── department.py     # Departments
+│       │   ├── task.py           # Tasks
+│       │   ├── task_assignment.py# Task assignments junction
+│       │   └── activity_log.py   # Security & audit logs
+│       ├── routes/               # Blueprints & Controllers
+│       │   ├── auth.py           # Authentications & sessions
+│       │   ├── employee.py       # Employee & department lists
+│       │   ├── task.py           # Task CRUD APIs
+│       │   └── assignment.py     # Assignment CRUD & status APIs
+│       └── services/             # Business Logic Layer
 │
-└── README.md                  # This file
+└── README.md                     # This file
 ```
 
 ---
 
-## 1️⃣ Frontend — Phase 1 (Complete)
+## 📊 Completed Milestones
 
-A fully functional, standalone **frontend login page** using simulated
-(fake) authentication via JavaScript and `localStorage`, built so it can
-be demonstrated and evaluated before the Flask + MySQL backend exists.
+All phases of the project implementation are **100% complete**:
 
-### ✅ Features Implemented
-- **Responsive, centered login card** built with Bootstrap 5 (desktop,
-  laptop, tablet, mobile).
-- **White / Blue / Light Gray** theme via CSS variables
-  (`--primary-color`, `--secondary-color`, `--background-color`).
-- Bootstrap **floating labels** for Username and Password.
-- **Show Password** checkbox to reveal/hide the password field.
-- **Remember Me** checkbox (UI only — no backend logic yet).
-- **Client-side validation**:
-  - Username: required, minimum 4 characters.
-  - Password: required, minimum 6 characters.
-  - Inline errors via Bootstrap's `is-invalid` / `invalid-feedback`.
-- **Fake authentication** using two hard-coded users (see credentials
-  below), simulating a ~1.5 second network delay with a loading spinner.
-- **Login button**: full-width, large, blue, hover animation, disabled +
-  spinner state while "logging in."
-- **Forgot Password** link opening a Bootstrap modal ("Feature coming
-  soon").
-- **Session persistence** via `localStorage` (`loggedIn`, `username`,
-  `role`, `loginTime`).
-- **Auto-redirect on existing session** when reopening `login.html`.
-- **Keyboard support**: Enter submits the form.
-- **Accessibility**: semantic HTML, `<label>` for every input, ARIA
-  attributes (`aria-describedby`, `aria-live`, `aria-hidden`), logical
-  tab order, auto-focus on username field.
-- **Animations**: card fade-in, button hover lift, input focus glow,
-  smooth modal transitions, loading spinner.
-- **Well-organized JavaScript** (`js/login.js`): `initializeLogin()`,
-  `validateForm()`, `validateField()`, `togglePassword()`,
-  `fakeAuthentication()`, `saveSession()`, `redirectUser()`,
-  `showAlert()`, `hideAlert()`, `checkExistingLogin()`,
-  `setLoadingState()`.
+- [x] **Phase 1: Mockup UIs** — Standalone login interface with local storage simulation.
+- [x] **Phase 2: Database Schema** — MySQL ORM models configured via SQLAlchemy.
+- [x] **Phase 3: Real Authentication** — Session-based cookie auth with `/api/auth/login` and `/api/auth/me`.
+- [x] **Phase 4: Task CRUD APIs** — Full REST CRUD operations for task creation, retrieval, updates, and deletion.
+- [x] **Phase 5: Auth Wiring** — Wired client-side login validation to real endpoints.
+- [x] **Phase 6: Dashboards** — Dynamic Admin and Employee panels with real-time status/remarks progress updates.
+- [x] **Phase 7: HCI Enhancements** — Upgraded fonts, hover indicators, top logout positions, and row click fill shortcuts.
 
-### ▶️ How to Run the Project (Frontend & Backend Unified)
+---
 
-The project is structured so that the Flask backend serves the frontend static assets. Follow these steps to run the application:
+## 🔑 Login Credentials (Pruned Sample Database)
 
-1. **Verify Database Configuration**:
-   Make sure you have MySQL running and a database named `task_management_db` is created and seeded. 
-   Check/update your MySQL credentials in `backend/.env`:
-   ```
+The development database has been pruned to a clean, minimal set of entries for easy demo testing:
+
+| Username | Password | Role | Employee Profile |
+|---|---|---|---|
+| `admin` | `admin123` | **Admin** | None |
+| `aarav.sharma` | `Employee123` | **Employee** | Aarav Sharma (ML Engineer) |
+| `rohan.patel` | `Employee123` | **Employee** | Rohan Patel (Office Assistant) |
+| `ananya.sharma` | `Employee123` | **Employee** | Ananya Sharma (UI Designer) |
+
+---
+
+## 🛡️ Security Implementations
+- **Secure Password Hashing**: Passwords are saved as secure cryptographic hashes using `scrypt` hashing algorithms. Plain-text credentials are never saved or exposed.
+- **Session Isolation**: Sessions are signed cryptographically to prevent client-side modifications.
+- **In-Transit Protection (HTTPS)**: Session cookies in the production configuration are locked with `SESSION_COOKIE_SECURE = True`, restricting transmission to encrypted SSL/TLS channels only.
+
+---
+
+## ⚙️ How to Setup and Run the Project
+
+### 1. Database Setup
+1. Create a MySQL database called `task_management_db`.
+2. Configure credentials by copying `backend/.env.example` to `backend/.env` and updating the `SQLALCHEMY_DATABASE_URI` line:
+   ```env
    SQLALCHEMY_DATABASE_URI=mysql+pymysql://<user>:<password>@localhost:3306/task_management_db
    ```
 
-2. **Activate the Virtual Environment**:
-   Open a terminal and navigate to the `backend/` directory:
+### 2. Startup Server
+1. Navigate to the `backend` directory:
    ```bash
    cd backend
+   ```
+2. Activate the pre-configured Python virtual environment:
+   ```bash
    venv\Scripts\activate
    ```
-
-3. **Install Dependencies**:
+3. Install the dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-
-4. **Run the Server**:
+4. Run the application:
    ```bash
    python run.py
    ```
-   This will start the development server on `http://127.0.0.1:5000`.
-
-5. **Open in Browser**:
-   Open `http://127.0.0.1:5000/` in your web browser. It will automatically serve the login page.
-
-### 🔑 Active Login Credentials (from database seed data)
-
-| Role     | Username        | Password      |
-|----------|-----------------|----------------|
-| Admin    | `admin`         | `admin123`     |
-| Employee | `aarav.sharma`  | `Employee123`  |
-| Employee | `rohan.patel`   | `Employee123`  |
-
-> **Note:** Redirection currently targets `dashboard.html` and `employee_dashboard.html`, which do not exist yet. You will see a `404 Not Found` page after a successful login. This is expected until these dashboards are created.
-
-### 🔌 Flask Integration Details
-The frontend is fully wired to the backend API:
-- The login form submits a `POST /api/auth/login` request.
-- The backend checks database credentials and establishes a signed session cookie.
-- Reopening the site triggers `GET /api/auth/me` to automatically verify the active session and redirect the user if a valid session exists.
+5. Open your web browser and go to **`http://127.0.0.1:5000/`**. The unified server will automatically serve the login page.
 
 ---
 
-## 2️⃣ Backend — Project Architecture
-
-The backend implements the **Application Factory Pattern** with clean separation of layers:
-- **`run.py`**: Entry point which initializes the Flask app factory.
-- **`task_management/__init__.py`**: Initializer configuring static serving of the frontend assets, CORS credentials, database binding, and blueprints.
-- **`task_management/models/`**: SQLAlchemy database models (`User`, `Employee`, `Task`, `TaskAssignment`, `ActivityLog`).
-- **`task_management/services/`**: Business logic implementations (`auth_service`, `employee_service`, `task_service`, `assignment_service`).
-- **`task_management/routes/`**: Flask Blueprint routes (`auth_bp`, `employee_bp`, `task_bp`, `assignment_bp`).
-
----
-
-## 🗺️ Overall Roadmap
-1. ~~Frontend login page (fake auth)~~ ✅
-2. ~~Backend Flask project structure~~ ✅
-3. ~~Database models (MySQL via SQLAlchemy)~~ ✅
-4. ~~Real `/api/login` route + authentication logic~~ ✅
-5. ~~Task CRUD APIs~~ ✅
-6. ~~Connect frontend `login.js` to the real API~~ ✅
-7. ~~Build out `dashboard.html` and `employee_dashboard.html`~~ ✅
+## 🧪 Testing and Verification
+To run the automated integration tests and check API health, activate the virtual environment in `backend/` and run:
+```bash
+python "C:\Users\Nehal Sahu\.gemini\antigravity\brain\99c62f35-a1f7-414c-a8eb-eeae902d09e8\scratch\test_backend_api.py"
+```
