@@ -12,33 +12,7 @@ from task_management.services import log_activity
 
 
 class AuthError(Exception):
-    """Raised for any authentication/registration business-rule violation."""
-
-
-def register_user(
-    *, username: str, email: str, password: str, role: str = "employee"
-) -> User:
-    """Create a new user account with a securely hashed password.
-
-    Raises AuthError if the username or email is already taken.
-    """
-    if User.query.filter_by(username=username).first() is not None:
-        raise AuthError(f"Username '{username}' is already taken.")
-    if User.query.filter_by(email=email).first() is not None:
-        raise AuthError(f"Email '{email}' is already registered.")
-
-    user = User(
-        username=username,
-        email=email,
-        password_hash=generate_password_hash(password),
-        role=role,
-    )
-    db.session.add(user)
-    db.session.flush()  # populate user.id for the log entry below
-
-    log_activity(user_id=user.id, action="user_registered", target_type="User", target_id=user.id)
-    db.session.commit()
-    return user
+    """Raised for any authentication or account business-rule violation."""
 
 
 def authenticate_user(*, username: str, password: str) -> User:
