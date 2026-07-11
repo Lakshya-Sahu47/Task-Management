@@ -56,6 +56,8 @@ def assign(current_user):
 def update_status(assignment_id: int, current_user):
     data = request.get_json(silent=True) or {}
     status = data.get("status")
+    completion_percentage = data.get("completion_percentage")
+    remarks = data.get("remarks")
 
     if not status:
         return jsonify({"error": "status is required."}), 400
@@ -65,6 +67,8 @@ def update_status(assignment_id: int, current_user):
             acting_user_id=current_user.id,
             assignment_id=assignment_id,
             status=status,
+            completion_percentage=completion_percentage,
+            remarks=remarks,
         )
     except AssignmentError as exc:
         return jsonify({"error": str(exc)}), 400
@@ -91,7 +95,15 @@ def by_employee(employee_id: int, current_user):
     except AssignmentError as exc:
         return jsonify({"error": str(exc)}), 404
 
-    return jsonify([a.to_dict() for a in assignments]), 200
+    res = []
+    for a in assignments:
+        d = a.to_dict()
+        d["task_title"] = a.task.title if a.task else "Unknown"
+        d["task_description"] = a.task.description if a.task else ""
+        d["task_priority"] = a.task.priority if a.task else "Medium"
+        d["task_estimated_hours"] = a.task.estimated_hours if a.task else None
+        res.append(d)
+    return jsonify(res), 200
 
 
 @assignment_bp.get("/task/<int:task_id>")
@@ -103,3 +115,17 @@ def by_task(task_id: int, current_user):
         return jsonify({"error": str(exc)}), 404
 
     return jsonify([a.to_dict() for a in assignments]), 200
+
+
+@assignment_bp.get("")
+@login_required
+def list_all_assignments(current_user):
+    from task_management.models.task_assignment import TaskAssignment
+    assignments = TaskAssignment.query.all()
+    res = []
+    for a in assignments:
+        d = a.to_dict()
+        d["task_title"] = a.task.title if a.task else "Unknown"
+        d["employee_name"] = f"{a.employee.first_name} {a.employee.last_name}" if a.employee else "Unknown"
+        res.append(d)
+    return jsonify(res), 200

@@ -52,7 +52,7 @@ function cacheElements() {
  */
 function initializeLogin() {
   // If the user is already logged in, skip the login form entirely.
-  checkExistingLogin();
+  // checkExistingLogin();
 
   // Focus username field for accessibility / convenience.
   if (elements.username) {

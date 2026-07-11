@@ -80,7 +80,12 @@ def get_assignment(assignment_id: int) -> TaskAssignment:
 
 
 def update_assignment_status(
-    *, acting_user_id: int, assignment_id: int, status: str
+    *,
+    acting_user_id: int,
+    assignment_id: int,
+    status: str,
+    completion_percentage: Optional[int] = None,
+    remarks: Optional[str] = None,
 ) -> TaskAssignment:
     """Update an assignment's status (e.g. moving it to 'completed').
 
@@ -94,13 +99,21 @@ def update_assignment_status(
     assignment.status = status
     if status == "Completed":
         assignment.completed_at = datetime.utcnow()
+        assignment.completion_percentage = 100
+    elif completion_percentage is not None:
+        if not (0 <= completion_percentage <= 100):
+            raise AssignmentError("Completion percentage must be between 0 and 100.")
+        assignment.completion_percentage = completion_percentage
+
+    if remarks is not None:
+        assignment.remarks = remarks
 
     log_activity(
         user_id=acting_user_id,
         action="task_assignment_status_updated",
         target_type="TaskAssignment",
         target_id=assignment.id,
-        details=f"status={status}",
+        details=f"status={status}, completion={assignment.completion_percentage}",
     )
     db.session.commit()
     return assignment

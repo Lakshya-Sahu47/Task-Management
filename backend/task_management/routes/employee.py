@@ -137,3 +137,19 @@ def by_department(department_id: int, current_user):
         return jsonify({"error": str(exc)}), 404
 
     return jsonify([employee.to_dict() for employee in employees]), 200
+
+
+@employee_bp.get("")
+@login_required
+def list_all_employees(current_user):
+    from task_management.models.employee import Employee
+    employees = Employee.query.filter_by(is_deleted=False).all()
+    return jsonify([emp.to_dict() for emp in employees]), 200
+
+
+@employee_bp.get("/departments")
+@login_required
+def list_departments(current_user):
+    from task_management.models.department import Department
+    departments = Department.query.all()
+    return jsonify([dept.to_dict() for dept in departments]), 200

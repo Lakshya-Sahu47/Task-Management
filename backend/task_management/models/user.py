@@ -41,6 +41,7 @@ class User(db.Model):
             "id": self.id,
             "username": self.username,
             "role": self.role.lower() if self.role else None,
+            "employee_id": self.employee.id if self.employee else None,
             "account_status": self.account_status,
             "last_login": self.last_login.isoformat() if self.last_login else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,

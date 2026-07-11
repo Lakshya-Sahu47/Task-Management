@@ -20,7 +20,7 @@ current state of the repo.
 | 3     | Backend  | Auth API (`/api/auth/login`) + real routes    | ✅ Complete     |
 | 4     | Backend  | Task CRUD APIs                                | ✅ Complete     |
 | 5     | Frontend | Wire `login.js` to real Flask API             | ✅ Complete     |
-| 6     | Frontend | Dashboard pages (Admin / Employee)            | ⬜ Not started |
+| 6     | Frontend | Dashboard pages (Admin / Employee)            | ✅ Complete     |
 
 Legend: ✅ Complete · 🟡 In progress · ⬜ Not started
 
@@ -168,4 +168,4 @@ The backend implements the **Application Factory Pattern** with clean separation
 4. ~~Real `/api/login` route + authentication logic~~ ✅
 5. ~~Task CRUD APIs~~ ✅
 6. ~~Connect frontend `login.js` to the real API~~ ✅
-7. Build out `dashboard.html` and `employee_dashboard.html`
+7. ~~Build out `dashboard.html` and `employee_dashboard.html`~~ ✅

@@ -53,3 +53,4 @@ class ProductionConfig(Config):
     """Configuration for production deployment."""
 
     DEBUG: bool = False
+    SESSION_COOKIE_SECURE: bool = True
