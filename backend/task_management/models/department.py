@@ -16,3 +16,10 @@ class Department(db.Model):
 
     def __repr__(self) -> str:
         return f"<Department id={self.id} name={self.name!r}>"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+        }

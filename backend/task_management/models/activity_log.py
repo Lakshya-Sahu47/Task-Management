@@ -22,3 +22,14 @@ class ActivityLog(db.Model):
 
     def __repr__(self) -> str:
         return f"<ActivityLog id={self.id} action={self.action!r}>"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "action": self.action,
+            "target_type": self.target_type,
+            "target_id": self.target_id,
+            "details": self.details,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }

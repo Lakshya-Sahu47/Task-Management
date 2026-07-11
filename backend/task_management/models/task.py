@@ -29,3 +29,16 @@ class Task(db.Model):
 
     def __repr__(self) -> str:
         return f"<Task id={self.id} title={self.title!r} status={self.status!r}>"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status,
+            "priority": self.priority,
+            "due_date": self.due_date.isoformat() if self.due_date else None,
+            "created_by": self.created_by,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+        }

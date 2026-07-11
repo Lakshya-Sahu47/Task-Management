@@ -31,3 +31,13 @@ class TaskAssignment(db.Model):
             f"<TaskAssignment task_id={self.task_id} "
             f"employee_id={self.employee_id} status={self.status!r}>"
         )
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "task_id": self.task_id,
+            "employee_id": self.employee_id,
+            "status": self.status,
+            "assigned_at": self.assigned_at.isoformat() if self.assigned_at else None,
+            "completed_at": self.completed_at.isoformat() if self.completed_at else None,
+        }

@@ -12,6 +12,7 @@ class User(db.Model):
 
     id: int = db.Column(db.Integer, primary_key=True)
     username: str = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    email: str = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash: str = db.Column(db.String(255), nullable=False)
     role: str = db.Column(db.String(20), nullable=False, default="employee")
     created_at: datetime = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -29,3 +30,12 @@ class User(db.Model):
 
     def __repr__(self) -> str:
         return f"<User id={self.id} username={self.username!r} role={self.role!r}>"
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "role": self.role,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }

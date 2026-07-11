@@ -85,7 +85,7 @@ def change_password_route(current_user):
     try:
         change_password(
             user_id=current_user.id,
-            old_password=old_password,
+            current_password=old_password,
             new_password=new_password,
         )
     except AuthError as exc:

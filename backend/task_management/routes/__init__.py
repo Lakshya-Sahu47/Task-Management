@@ -24,7 +24,7 @@ from typing import Callable
 
 from flask import Flask, jsonify, session
 
-from task_management.services.auth_service import get_user_by_id
+from task_management.services.auth_service import AuthError, get_user_by_id
 
 
 def login_required(view_func: Callable) -> Callable:
@@ -36,8 +36,9 @@ def login_required(view_func: Callable) -> Callable:
         if user_id is None:
             return jsonify({"error": "Authentication required."}), 401
 
-        user = get_user_by_id(user_id)
-        if user is None:
+        try:
+            user = get_user_by_id(user_id)
+        except AuthError:
             session.clear()
             return jsonify({"error": "Authentication required."}), 401
 

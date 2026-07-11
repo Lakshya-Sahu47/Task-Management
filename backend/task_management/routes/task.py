@@ -44,7 +44,6 @@ def create(current_user):
         task = create_task(
             title=title,
             description=data.get("description"),
-            status=data.get("status", "pending"),
             priority=data.get("priority", "medium"),
             due_date=data.get("due_date"),
             created_by=current_user.id,
@@ -72,7 +71,11 @@ def update(task_id: int, current_user):
     data = request.get_json(silent=True) or {}
 
     try:
-        task = update_task(task_id, **data)
+        task = update_task(
+            acting_user_id=current_user.id,
+            task_id=task_id,
+            **data,
+        )
     except TaskError as exc:
         return jsonify({"error": str(exc)}), 400
 
@@ -83,7 +86,7 @@ def update(task_id: int, current_user):
 @login_required
 def delete(task_id: int, current_user):
     try:
-        delete_task(task_id)
+        delete_task(acting_user_id=current_user.id, task_id=task_id)
     except TaskError as exc:
         return jsonify({"error": str(exc)}), 404
 
@@ -94,7 +97,7 @@ def delete(task_id: int, current_user):
 @login_required
 def list_all(current_user):
     filters = {}
-    for key in ("status", "priority", "created_by"):
+    for key in ("status", "created_by"):
         value = request.args.get(key)
         if value is not None:
             filters[key] = value

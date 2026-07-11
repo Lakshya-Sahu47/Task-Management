@@ -29,6 +29,11 @@ class Config:
         os.environ.get("SQLALCHEMY_TRACK_MODIFICATIONS", "False") == "True"
     )
 
+    # Ping the connection before each checkout from the pool so a MySQL
+    # connection that timed out / was dropped by the server doesn't
+    # surface as a confusing error on the next request or health check.
+    SQLALCHEMY_ENGINE_OPTIONS: dict = {"pool_pre_ping": True}
+
     # CORS
     CORS_ORIGINS: str = os.environ.get("CORS_ORIGINS", "*")
 

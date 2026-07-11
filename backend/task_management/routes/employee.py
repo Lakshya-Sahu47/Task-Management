@@ -50,12 +50,12 @@ def create(current_user):
 
     try:
         employee = create_employee(
+            acting_user_id=current_user.id,
             user_id=user_id,
             department_id=department_id,
             first_name=first_name,
             last_name=last_name,
-            job_title=data.get("job_title"),
-            hire_date=data.get("hire_date"),
+            position=data.get("position") or data.get("job_title"),
         )
     except EmployeeError as exc:
         return jsonify({"error": str(exc)}), 400
@@ -81,7 +81,11 @@ def update(employee_id: int, current_user):
     data = request.get_json(silent=True) or {}
 
     try:
-        employee = update_employee(employee_id, **data)
+        employee = update_employee(
+            acting_user_id=current_user.id,
+            employee_id=employee_id,
+            **data,
+        )
     except EmployeeError as exc:
         return jsonify({"error": str(exc)}), 400
 
@@ -93,7 +97,7 @@ def update(employee_id: int, current_user):
 @roles_required("admin", "manager")
 def delete(employee_id: int, current_user):
     try:
-        delete_employee(employee_id)
+        delete_employee(acting_user_id=current_user.id, employee_id=employee_id)
     except EmployeeError as exc:
         return jsonify({"error": str(exc)}), 404
 

@@ -40,7 +40,11 @@ def assign(current_user):
         return jsonify({"error": "task_id and employee_id are required."}), 400
 
     try:
-        assignment = assign_task_to_employee(task_id=task_id, employee_id=employee_id)
+        assignment = assign_task_to_employee(
+            acting_user_id=current_user.id,
+            task_id=task_id,
+            employee_id=employee_id,
+        )
     except AssignmentError as exc:
         return jsonify({"error": str(exc)}), 400
 
@@ -57,7 +61,11 @@ def update_status(assignment_id: int, current_user):
         return jsonify({"error": "status is required."}), 400
 
     try:
-        assignment = update_assignment_status(assignment_id, status=status)
+        assignment = update_assignment_status(
+            acting_user_id=current_user.id,
+            assignment_id=assignment_id,
+            status=status,
+        )
     except AssignmentError as exc:
         return jsonify({"error": str(exc)}), 400
 
@@ -68,7 +76,7 @@ def update_status(assignment_id: int, current_user):
 @login_required
 def remove(assignment_id: int, current_user):
     try:
-        remove_assignment(assignment_id)
+        remove_assignment(acting_user_id=current_user.id, assignment_id=assignment_id)
     except AssignmentError as exc:
         return jsonify({"error": str(exc)}), 404
 
