@@ -9,15 +9,9 @@
    ========================================================================== */
 
 // --------------------------------------------------------------------------
-// Fake user "database" - to be replaced by Flask + MySQL later
-// --------------------------------------------------------------------------
-const FAKE_USERS = [
-  { username: "admin", password: "admin123", role: "admin" },
-  { username: "employee", password: "employee123", role: "employee" },
-];
-
-// Simulated network/auth delay (ms)
-const FAKE_AUTH_DELAY = 1500;
+const API_BASE_URL = (window.location.protocol === "file:")
+  ? "http://127.0.0.1:5000/api"
+  : window.location.origin + "/api";
 
 // --------------------------------------------------------------------------
 // DOM element references (populated on DOMContentLoaded)
@@ -81,12 +75,29 @@ function initializeLogin() {
  * found, the user is redirected immediately based on their role.
  */
 function checkExistingLogin() {
-  const loggedIn = localStorage.getItem("loggedIn");
-  const role = localStorage.getItem("role");
-
-  if (loggedIn === "true" && role) {
-    redirectUser(role);
-  }
+  fetch(`${API_BASE_URL}/auth/me`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    },
+    credentials: "include"
+  })
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error("Not logged in");
+  })
+  .then((user) => {
+    saveSession(user);
+    redirectUser(user.role);
+  })
+  .catch(() => {
+    // If not authenticated, clear any stale session info
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+  });
 }
 
 /**
@@ -110,7 +121,7 @@ function handleFormSubmit(event) {
 
   setLoadingState(true);
 
-  fakeAuthentication(username, password)
+  authenticateUser(username, password)
     .then((user) => {
       saveSession(user);
       redirectUser(user.role);
@@ -182,26 +193,28 @@ function togglePassword() {
 }
 
 /**
- * Simulates a backend authentication call.
- * Replace this function's internals with a real fetch() to the
- * Flask API once the backend is available (see README.md).
+ * Authenticates against the real Flask backend API.
  * @param {string} username
  * @param {string} password
  * @returns {Promise<{username: string, role: string}>}
  */
-function fakeAuthentication(username, password) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const matchedUser = FAKE_USERS.find(
-        (user) => user.username === username && user.password === password
-      );
-
-      if (matchedUser) {
-        resolve({ username: matchedUser.username, role: matchedUser.role });
-      } else {
-        reject(new Error("Invalid username or password."));
-      }
-    }, FAKE_AUTH_DELAY);
+function authenticateUser(username, password) {
+  return fetch(`${API_BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify({ username, password })
+  })
+  .then((response) => {
+    if (!response.ok) {
+      return response.json().then((err) => {
+        throw new Error(err.error || "Invalid username or password.");
+      });
+    }
+    return response.json();
   });
 }
 

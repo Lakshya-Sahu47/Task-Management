@@ -19,6 +19,8 @@ class Config:
 
     # Flask core
     SECRET_KEY: str = os.environ.get("SECRET_KEY", "dev-secret-key")
+    SESSION_COOKIE_SAMESITE: str = "Lax"
+    SESSION_COOKIE_SECURE: bool = False
 
     # SQLAlchemy / MySQL
     SQLALCHEMY_DATABASE_URI: str = os.environ.get(

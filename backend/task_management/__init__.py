@@ -18,7 +18,9 @@ from .routes import register_routes
 
 
 def create_app() -> Flask:
-    app = Flask(__name__)
+    # Resolve absolute path of the frontend folder (two levels up from this file)
+    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend"))
+    app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
 
     # Select config class based on FLASK_ENV (set in .env / environment).
     # Defaults to development if not specified.
@@ -29,7 +31,11 @@ def create_app() -> Flask:
     # Bind extensions to this app instance (factory pattern requires
     # init_app rather than passing `app` at instantiation time).
     db.init_app(app)
-    cors.init_app(app, origins=app.config.get("CORS_ORIGINS"))
+    cors.init_app(
+        app,
+        origins=app.config.get("CORS_ORIGINS"),
+        supports_credentials=True,
+    )
 
     # Register all API blueprints
     register_routes(app)
@@ -63,5 +69,10 @@ def create_app() -> Flask:
                 ),
                 500,
             )
+
+    # --- Root route redirecting to login.html --------------------------
+    @app.route("/")
+    def index():
+        return app.send_static_file("login.html")
 
     return app

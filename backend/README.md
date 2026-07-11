@@ -42,15 +42,15 @@ backend/
 
 | Order | File                          | Status         | Purpose                                                   |
 |-------|-------------------------------|----------------|-------------------------------------------------------------|
-| 1     | `requirements.txt`            | ⬜ Not started | Pin project dependencies                                    |
-| 2     | `.env.example`                 | ⬜ Not started | Template for required environment variables                 |
-| 3     | `run.py`                        | ⬜ Not started | Entry point that calls `create_app()` and runs dev server   |
-| 4     | `task_management/__init__.py`    | ⬜ Not started | Application factory (`create_app()`), extension init, blueprint registration |
-| 5     | `task_management/config.py`       | ⬜ Not started | Config classes reading from environment variables           |
-| 6     | `task_management/extensions.py`    | ⬜ Not started | Shared extension instances (`db`, `cors`)                    |
-| 7     | `task_management/models/`           | ⬜ Not started | SQLAlchemy ORM models (MySQL)                                |
-| 8     | `task_management/services/`          | ⬜ Not started | Business logic layer                                         |
-| 9     | `task_management/routes/`             | ⬜ Not started | Blueprints and API endpoints                                  |
+| 1     | `requirements.txt`            | ✅ Complete     | Pin project dependencies                                    |
+| 2     | `.env.example`                 | ✅ Complete     | Template for required environment variables                 |
+| 3     | `run.py`                        | ✅ Complete     | Entry point that calls `create_app()` and runs dev server   |
+| 4     | `task_management/__init__.py`    | ✅ Complete     | Application factory (`create_app()`), extension init, blueprint registration |
+| 5     | `task_management/config.py`       | ✅ Complete     | Config classes reading from environment variables           |
+| 6     | `task_management/extensions.py`    | ✅ Complete     | Shared extension instances (`db`, `cors`)                    |
+| 7     | `task_management/models/`           | ✅ Complete     | SQLAlchemy ORM models (MySQL)                                |
+| 8     | `task_management/services/`          | ✅ Complete     | Business logic layer                                         |
+| 9     | `task_management/routes/`             | ✅ Complete     | Blueprints and API endpoints                                  |
 | 10    | `task_management/utils/`               | ⬜ Not started | Shared helper functions                                        |
 
 Legend: ✅ Complete · 🟡 In progress · ⬜ Not started
@@ -72,6 +72,25 @@ Legend: ✅ Complete · 🟡 In progress · ⬜ Not started
 
 ---
 
-## ▶️ Next Recommended File
+## ▶️ How to Run the Server
 
-`requirements.txt`
+To start the Flask development server (which also serves the frontend static assets):
+
+1. **Check your configuration**:
+   Ensure your `.env` contains valid credentials for the MySQL database `task_management_db`.
+
+2. **Activate the Virtual Environment**:
+   ```bash
+   venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run Server**:
+   ```bash
+   python run.py
+   ```
+   Open `http://127.0.0.1:5000/` in your browser. Flask serves the frontend assets from `../frontend` automatically.
