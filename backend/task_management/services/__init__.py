@@ -23,7 +23,7 @@ def log_activity(
     target_type: Optional[str] = None,
     target_id: Optional[int] = None,
     details: Optional[str] = None,
-) -> ActivityLog:
+) -> Optional[ActivityLog]:
     """Record an audit-trail entry.
 
     Shared by every service so that all state-changing operations are
@@ -32,12 +32,14 @@ def log_activity(
     and commit once, so the audit record never exists without the
     change it describes (and vice versa).
     """
+    if target_type != "TaskAssignment" or target_id is None:
+        return None
+
     entry = ActivityLog(
         user_id=user_id,
+        assignment_id=target_id,
         action=action,
-        target_type=target_type,
-        target_id=target_id,
-        details=details,
+        new_value={"details": details} if details else None,
     )
     db.session.add(entry)
     return entry

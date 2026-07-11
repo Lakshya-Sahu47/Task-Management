@@ -11,7 +11,22 @@ from task_management.models.task import Task
 from task_management.models.task_assignment import TaskAssignment
 from task_management.services import log_activity
 
-VALID_STATUSES = {"assigned", "in_progress", "completed", "declined"}
+VALID_STATUSES = {"Pending", "In Progress", "Completed", "On Hold", "Cancelled"}
+
+
+def normalize_status(status: str) -> str:
+    normalized = status.strip().lower().replace("_", " ")
+    mapping = {
+        "assigned": "Pending",
+        "pending": "Pending",
+        "in progress": "In Progress",
+        "completed": "Completed",
+        "on hold": "On Hold",
+        "cancelled": "Cancelled",
+        "canceled": "Cancelled",
+        "declined": "Cancelled",
+    }
+    return mapping.get(normalized, status)
 
 
 class AssignmentError(Exception):
@@ -38,7 +53,8 @@ def assign_task_to_employee(
     assignment = TaskAssignment(
         task_id=task_id,
         employee_id=employee_id,
-        status="assigned",
+        assigned_by=acting_user_id,
+        status="Pending",
         assigned_at=datetime.utcnow(),
     )
     db.session.add(assignment)
@@ -70,12 +86,13 @@ def update_assignment_status(
 
     Stamps completed_at when the status transitions to 'completed'.
     """
+    status = normalize_status(status)
     if status not in VALID_STATUSES:
         raise AssignmentError(f"Invalid status '{status}'. Must be one of {sorted(VALID_STATUSES)}.")
 
     assignment = get_assignment(assignment_id)
     assignment.status = status
-    if status == "completed":
+    if status == "Completed":
         assignment.completed_at = datetime.utcnow()
 
     log_activity(

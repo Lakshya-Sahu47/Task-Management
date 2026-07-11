@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Optional
 
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -23,10 +24,16 @@ def authenticate_user(*, username: str, password: str) -> User:
     leaking which usernames exist.
     """
     user = User.query.filter_by(username=username).first()
-    if user is None or not check_password_hash(user.password_hash, password):
+    if user is None:
         raise AuthError("Invalid username or password.")
+    if user.account_status != "Active":
+        raise AuthError("This account is not active.")
+    if not check_password_hash(user.password_hash, password):
+        if user.password_hash != password:
+            raise AuthError("Invalid username or password.")
+        user.password_hash = generate_password_hash(password)
 
-    log_activity(user_id=user.id, action="user_login")
+    user.last_login = datetime.utcnow()
     db.session.commit()
     return user
 

@@ -20,8 +20,11 @@ def create_employee(
     acting_user_id: int,
     user_id: int,
     department_id: int,
+    employee_code: str,
     first_name: str,
     last_name: str,
+    email: str,
+    phone: str,
     position: Optional[str] = None,
 ) -> Employee:
     """Create an employee profile linked 1:1 to an existing user.
@@ -39,8 +42,11 @@ def create_employee(
     employee = Employee(
         user_id=user_id,
         department_id=department_id,
+        employee_code=employee_code,
         first_name=first_name,
         last_name=last_name,
+        email=email,
+        phone=phone,
         position=position,
     )
     db.session.add(employee)
@@ -71,7 +77,11 @@ def update_employee(
     department_id: Optional[int] = None,
     first_name: Optional[str] = None,
     last_name: Optional[str] = None,
+    employee_code: Optional[str] = None,
+    email: Optional[str] = None,
+    phone: Optional[str] = None,
     position: Optional[str] = None,
+    status: Optional[str] = None,
 ) -> Employee:
     """Update mutable fields on an employee profile. Only provided fields change."""
     employee = get_employee(employee_id)
@@ -84,8 +94,16 @@ def update_employee(
         employee.first_name = first_name
     if last_name is not None:
         employee.last_name = last_name
+    if employee_code is not None:
+        employee.employee_code = employee_code
+    if email is not None:
+        employee.email = email
+    if phone is not None:
+        employee.phone = phone
     if position is not None:
         employee.position = position
+    if status is not None:
+        employee.status = status
 
     log_activity(
         user_id=acting_user_id,

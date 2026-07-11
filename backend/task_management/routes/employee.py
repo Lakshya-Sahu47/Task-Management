@@ -37,13 +37,21 @@ def create(current_user):
     data = request.get_json(silent=True) or {}
     user_id = data.get("user_id")
     department_id = data.get("department_id")
+    employee_code = data.get("employee_code")
     first_name = data.get("first_name")
     last_name = data.get("last_name")
+    email = data.get("email")
+    phone = data.get("phone")
 
-    if not user_id or not department_id or not first_name or not last_name:
+    if not all([user_id, department_id, employee_code, first_name, last_name, email, phone]):
         return (
             jsonify(
-                {"error": "user_id, department_id, first_name, and last_name are required."}
+                {
+                    "error": (
+                        "user_id, department_id, employee_code, first_name, "
+                        "last_name, email, and phone are required."
+                    )
+                }
             ),
             400,
         )
@@ -53,8 +61,11 @@ def create(current_user):
             acting_user_id=current_user.id,
             user_id=user_id,
             department_id=department_id,
+            employee_code=employee_code,
             first_name=first_name,
             last_name=last_name,
+            email=email,
+            phone=phone,
             position=data.get("position") or data.get("job_title"),
         )
     except EmployeeError as exc:
@@ -79,12 +90,25 @@ def get(employee_id: int, current_user):
 @roles_required("admin", "manager")
 def update(employee_id: int, current_user):
     data = request.get_json(silent=True) or {}
+    allowed_fields = {
+        "department_id",
+        "first_name",
+        "last_name",
+        "employee_code",
+        "email",
+        "phone",
+        "position",
+        "status",
+    }
+    updates = {key: value for key, value in data.items() if key in allowed_fields}
+    if "job_title" in data and "position" not in updates:
+        updates["position"] = data["job_title"]
 
     try:
         employee = update_employee(
             acting_user_id=current_user.id,
             employee_id=employee_id,
-            **data,
+            **updates,
         )
     except EmployeeError as exc:
         return jsonify({"error": str(exc)}), 400

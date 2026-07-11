@@ -1,4 +1,4 @@
-"""User model — authentication credentials and role information."""
+"""User model - authentication credentials and role information."""
 
 from datetime import datetime
 
@@ -6,18 +6,23 @@ from task_management.extensions import db
 
 
 class User(db.Model):
-    """Represents a login account (admin or employee) with hashed credentials."""
+    """Represents a login account stored in the schema.sql users table."""
 
     __tablename__ = "users"
 
-    id: int = db.Column(db.Integer, primary_key=True)
-    username: str = db.Column(db.String(80), unique=True, nullable=False, index=True)
-    email: str = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    id: int = db.Column("user_id", db.Integer, primary_key=True)
+    username: str = db.Column(db.String(50), unique=True, nullable=False, index=True)
     password_hash: str = db.Column(db.String(255), nullable=False)
-    role: str = db.Column(db.String(20), nullable=False, default="employee")
+    role: str = db.Column(db.Enum("Admin", "Employee"), nullable=False)
+    account_status: str = db.Column(
+        db.Enum("Active", "Inactive", "Locked"), nullable=False, default="Active"
+    )
+    last_login: datetime | None = db.Column(db.DateTime, nullable=True)
     created_at: datetime = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at: datetime = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
 
-    # One-to-one: not every user (e.g. an admin) necessarily has an employee profile.
     employee = db.relationship(
         "Employee",
         back_populates="user",
@@ -35,7 +40,9 @@ class User(db.Model):
         return {
             "id": self.id,
             "username": self.username,
-            "email": self.email,
-            "role": self.role,
+            "role": self.role.lower() if self.role else None,
+            "account_status": self.account_status,
+            "last_login": self.last_login.isoformat() if self.last_login else None,
             "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

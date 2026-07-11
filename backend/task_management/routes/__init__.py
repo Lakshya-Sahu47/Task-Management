@@ -65,7 +65,9 @@ def roles_required(*roles: str) -> Callable:
         @wraps(view_func)
         def wrapper(*args, **kwargs):
             current_user = kwargs.get("current_user")
-            if current_user is None or current_user.role not in roles:
+            allowed_roles = {role.lower() for role in roles}
+            current_role = current_user.role.lower() if current_user and current_user.role else None
+            if current_role not in allowed_roles:
                 return jsonify({"error": "Insufficient permissions."}), 403
             return view_func(*args, **kwargs)
 

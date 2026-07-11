@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import date
 from typing import List, Optional
 
 from task_management.extensions import db
@@ -10,8 +9,19 @@ from task_management.models.task import Task
 from task_management.models.user import User
 from task_management.services import log_activity
 
-VALID_STATUSES = {"pending", "in_progress", "completed", "cancelled"}
-VALID_PRIORITIES = {"low", "medium", "high", "urgent"}
+VALID_PRIORITIES = {"Low", "Medium", "High", "Critical"}
+
+
+def normalize_priority(priority: str) -> str:
+    normalized = priority.strip().lower()
+    mapping = {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical",
+        "urgent": "Critical",
+    }
+    return mapping.get(normalized, priority)
 
 
 class TaskError(Exception):
@@ -23,8 +33,9 @@ def create_task(
     created_by: int,
     title: str,
     description: Optional[str] = None,
-    priority: str = "medium",
-    due_date: Optional[date] = None,
+    priority: str = "Medium",
+    notes: Optional[str] = None,
+    estimated_hours: Optional[int] = None,
 ) -> Task:
     """Create a new task owned by the given user.
 
@@ -33,15 +44,16 @@ def create_task(
     """
     if User.query.get(created_by) is None:
         raise TaskError(f"No user found with id={created_by}.")
+    priority = normalize_priority(priority)
     if priority not in VALID_PRIORITIES:
         raise TaskError(f"Invalid priority '{priority}'. Must be one of {sorted(VALID_PRIORITIES)}.")
 
     task = Task(
         title=title,
         description=description,
-        status="pending",
+        notes=notes,
         priority=priority,
-        due_date=due_date,
+        estimated_hours=estimated_hours,
         created_by=created_by,
     )
     db.session.add(task)
@@ -66,9 +78,9 @@ def update_task(
     task_id: int,
     title: Optional[str] = None,
     description: Optional[str] = None,
-    status: Optional[str] = None,
     priority: Optional[str] = None,
-    due_date: Optional[date] = None,
+    notes: Optional[str] = None,
+    estimated_hours: Optional[int] = None,
 ) -> Task:
     """Update mutable fields on a task. Only provided fields change."""
     task = get_task(task_id)
@@ -77,16 +89,15 @@ def update_task(
         task.title = title
     if description is not None:
         task.description = description
-    if status is not None:
-        if status not in VALID_STATUSES:
-            raise TaskError(f"Invalid status '{status}'. Must be one of {sorted(VALID_STATUSES)}.")
-        task.status = status
+    if notes is not None:
+        task.notes = notes
     if priority is not None:
+        priority = normalize_priority(priority)
         if priority not in VALID_PRIORITIES:
             raise TaskError(f"Invalid priority '{priority}'. Must be one of {sorted(VALID_PRIORITIES)}.")
         task.priority = priority
-    if due_date is not None:
-        task.due_date = due_date
+    if estimated_hours is not None:
+        task.estimated_hours = estimated_hours
 
     log_activity(
         user_id=acting_user_id, action="task_updated", target_type="Task", target_id=task.id
@@ -103,13 +114,15 @@ def delete_task(*, acting_user_id: int, task_id: int) -> None:
     db.session.commit()
 
 
-def list_tasks(*, status: Optional[str] = None, created_by: Optional[int] = None) -> List[Task]:
-    """Return tasks, optionally filtered by status and/or creator."""
+def list_tasks(*, created_by: Optional[int] = None, priority: Optional[str] = None) -> List[Task]:
+    """Return non-deleted tasks, optionally filtered by creator or priority."""
     query = Task.query
-    if status is not None:
-        if status not in VALID_STATUSES:
-            raise TaskError(f"Invalid status '{status}'. Must be one of {sorted(VALID_STATUSES)}.")
-        query = query.filter_by(status=status)
+    query = query.filter_by(is_deleted=False)
     if created_by is not None:
         query = query.filter_by(created_by=created_by)
+    if priority is not None:
+        priority = normalize_priority(priority)
+        if priority not in VALID_PRIORITIES:
+            raise TaskError(f"Invalid priority '{priority}'. Must be one of {sorted(VALID_PRIORITIES)}.")
+        query = query.filter_by(priority=priority)
     return query.all()
