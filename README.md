@@ -119,5 +119,5 @@ The development database has been pruned to a clean, minimal set of entries for 
 ## 🧪 Testing and Verification
 To run the automated integration tests and check API health, activate the virtual environment in `backend/` and run:
 ```bash
-python "C:\Users\Nehal Sahu\.gemini\antigravity\brain\99c62f35-a1f7-414c-a8eb-eeae902d09e8\scratch\test_backend_api.py"
+python test_backend_api.py
 ```
